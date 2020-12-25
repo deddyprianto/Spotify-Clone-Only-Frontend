@@ -9,7 +9,7 @@ import {
   VolumeDown,
   Pause,
 } from "@material-ui/icons";
-import { Grid, Slider, IconButton } from "@material-ui/core";
+import { Grid, Slider } from "@material-ui/core";
 import "./Footer.css";
 function Footer() {
   const [press, setPress] = useState(false);
@@ -29,16 +29,11 @@ function Footer() {
       <div className="footer__center">
         <Shuffle className="footer__green" />
         <SkipPrevious className="footer__icon" />
-        <IconButton onClick={() => setPress(true)}>
-          {press === false ? (
-            <PlayCircleOutline
-              fontSize="large"
-              className="footer__icon footer__me"
-            />
-          ) : (
-            <Pause fontSize="large" className="footer__icon footer__me" />
-          )}
-        </IconButton>
+        {press ? (
+          <Pause onClick={() => setPress(false)} />
+        ) : (
+          <PlayCircleOutline onClick={() => setPress(true)} />
+        )}
         <SkipNext className="footer__icon" />
         <Repeat className="footer__green" />
       </div>
