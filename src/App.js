@@ -36,7 +36,6 @@ function App() {
   }, []);
   return (
     <Router>
-      {/* this is changes happen */}
       <div className="App">
         <Route path="/">
           {token ? <Player spotify={spotify} /> : <Login />}
