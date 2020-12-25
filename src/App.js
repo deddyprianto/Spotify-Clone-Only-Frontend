@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import SpotifWebApi from "spotify-web-api-js";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import "./App.css";
+import Login from "./Login";
+import Player from "./Player";
+import { getURLIfLogin } from "./Spotify";
+import { stateValueProvider } from "./StateProvider";
 
+const spotify = new SpotifWebApi();
 function App() {
+  const [{ user, token }, dispatch] = stateValueProvider();
+  useEffect(() => {
+    const testURL = getURLIfLogin();
+    window.location.hash = "";
+    const _token = testURL.access_token;
+    if (_token) {
+      dispatch({
+        type: "SET_TOKEN",
+        token: _token,
+      });
+      spotify.setAccessToken(_token);
+      spotify.getMe().then((res) => {
+        dispatch({
+          type: "STATE_USER",
+          userapi: res,
+        });
+      });
+    }
+    spotify.getPlaylist("14nmEfG5ZAZLhYnYoGJP2o").then((data) => {
+      dispatch({
+        type: "GET_PLAYLIST",
+        discover: data,
+      });
+    });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Route path="/">
+          {token ? <Player spotify={spotify} /> : <Login />}
+        </Route>
+      </div>
+    </Router>
   );
 }
 
